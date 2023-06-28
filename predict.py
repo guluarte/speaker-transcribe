@@ -19,8 +19,8 @@ class Predictor():
         self.audio_pre = AudioPreProcessor()
 
         self.diarization = SpeakerDiarization(
-            segmentation="./data/pyannote/segmentation/pytorch_model.bin",
-            embedding="./data/speechbrain/spkrec-ecapa-voxceleb",
+            segmentation="/data/pyannote/segmentation/pytorch_model.bin",
+            embedding="/data/speechbrain/spkrec-ecapa-voxceleb",
             clustering="AgglomerativeClustering",
             segmentation_batch_size=32,
             embedding_batch_size=32,
@@ -39,7 +39,7 @@ class Predictor():
         })
         self.diarization_post = DiarizationPostProcessor()
 
-        with open(f"./data/whisper/medium.en.pt", "rb") as f:
+        with open(f"/data/whisper/medium.en.pt", "rb") as f:
             checkpoint = torch.load(f, map_location="cpu")
             dims = ModelDimensions(**checkpoint["dims"])
         self.whisper = Whisper(dims)
