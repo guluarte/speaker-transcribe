@@ -3,3 +3,4 @@ venv/
 *.webm
 *.json
 */__pycache__/
+data/

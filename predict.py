@@ -1,13 +1,4 @@
-"""
-download model weights to /data
-wget -O - https://pyannote-speaker-diarization.s3.eu-west-2.amazonaws.com/data-2023-03-25-02.tar.gz | tar xz -C /
-wget -P /data/whisper https://openaipublic.azureedge.net/main/whisper/models/d7440d1dc186f76616474e0ff0b3b6b879abc9d1a4926b7adfa41db2d497ab4f/medium.en.pt
-# wget -P /data/whisper https://openaipublic.azureedge.net/main/whisper/models/345ae4da62f9b3d59415adc60127b97c714f32e89e936602e85993674d08dcb1/medium.pt
-"""
-
 import json
-import tempfile
-from shlex import join
 import sys
 
 import numpy as np
@@ -28,8 +19,8 @@ class Predictor():
         self.audio_pre = AudioPreProcessor()
 
         self.diarization = SpeakerDiarization(
-            segmentation="/data/pyannote/segmentation/pytorch_model.bin",
-            embedding="/data/speechbrain/spkrec-ecapa-voxceleb",
+            segmentation="./data/pyannote/segmentation/pytorch_model.bin",
+            embedding="./data/speechbrain/spkrec-ecapa-voxceleb",
             clustering="AgglomerativeClustering",
             segmentation_batch_size=32,
             embedding_batch_size=32,
@@ -48,7 +39,7 @@ class Predictor():
         })
         self.diarization_post = DiarizationPostProcessor()
 
-        with open(f"/data/whisper/medium.en.pt", "rb") as f:
+        with open(f"./data/whisper/medium.en.pt", "rb") as f:
             checkpoint = torch.load(f, map_location="cpu")
             dims = ModelDimensions(**checkpoint["dims"])
         self.whisper = Whisper(dims)
@@ -73,13 +64,13 @@ class Predictor():
     def run_transcription(self, audio, result, whisper_prompt):
         print('transcribing segments...')
         segments = result["segments"]
-        
+
         if whisper_prompt:
             print('using prompt:', repr(whisper_prompt))
-        
+
         self.whisper.to("cuda")
         trimmer = Audio(sample_rate=16000, mono=True)
-        
+
         for seg in segments:
             start = seg['start']
             stop = seg['stop']
@@ -88,11 +79,12 @@ class Predictor():
             frames, _ = trimmer.crop(audio, Segment(start, stop))
             # audio data was already downmixed to mono, so exract the first (only) channel
             frames = frames[0]
-            seg['transcript'] = self.transcribe_segment(frames, start, whisper_prompt)
-            
+            seg['transcript'] = self.transcribe_segment(
+                frames, start, whisper_prompt)
+
             text = " ".join(list(map(lambda s: s['text'], seg['transcript'])))
-            
-            line = "[{}]: {}".format(seg['speaker'], text )
+
+            line = "[{}]: {}".format(seg['speaker'], text)
             result["text"].append(line)
             print(line)
 
@@ -175,6 +167,8 @@ class Predictor():
         result["segments"] = self.diarization_post.format_segments(
             result["segments"])
 
+        result["text"] = "".join(result["text"])
+
         # cleanup
         self.audio_pre.cleanup()
 
@@ -197,5 +191,7 @@ def main() -> int:
     p.setup()
     p.predict(audio, output, prompt)
     return 0
+
+
 if __name__ == '__main__':
-    sys.exit(main())  # 
+    sys.exit(main())  #
