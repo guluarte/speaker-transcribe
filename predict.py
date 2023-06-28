@@ -7,7 +7,7 @@ wget -P /data/whisper https://openaipublic.azureedge.net/main/whisper/models/d74
 
 import json
 import tempfile
-import shlex
+from shlex import join
 import sys
 
 import numpy as np
@@ -81,11 +81,14 @@ class Predictor():
             start = seg['start']
             stop = seg['stop']
             print(
-                f"transcribing segment {format_ts(start)} to {format_ts(stop)}")
+                f"===== transcribing segment {format_ts(start)} to {format_ts(stop)} =====")
             frames, _ = trimmer.crop(audio, Segment(start, stop))
             # audio data was already downmixed to mono, so exract the first (only) channel
             frames = frames[0]
             seg['transcript'] = self.transcribe_segment(frames, start, whisper_prompt)
+            
+            text = " ".join(list(map(lambda s: s['text'], seg['transcript'])))
+            print("[{}]: {}".format(seg['speaker'], text ))
 
     def transcribe_segment(self, audio, ctx_start, whisper_prompt):
         # `temperature`: temperature to use for sampling
@@ -159,6 +162,7 @@ class Predictor():
             result = self.run_diarization()
 
         # transcribe segments
+        
         self.run_transcription(self.audio_pre.output_path, result["segments"], prompt)
 
         # format segments
