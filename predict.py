@@ -147,7 +147,7 @@ class Predictor():
             })
         return result
 
-    def predict(self, audio: str, output: str, prompt: str = "") -> str:
+    def predict(self, audio: str, output: str = "./output.json", prompt: str = "") -> str:
         """Run a single prediction on the model"""
 
         self.audio_pre.process(audio)
@@ -169,7 +169,6 @@ class Predictor():
         self.audio_pre.cleanup()
 
         # write output
-        output = "./output.json"
         with open(output, "w") as f:
             f.write(json.dumps(result, indent=2))
         return output
