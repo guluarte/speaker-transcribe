@@ -70,13 +70,16 @@ class Predictor():
         }
         return self.diarization_post.process(diarization, embeddings)
 
-    def run_transcription(self, audio, segments, whisper_prompt):
+    def run_transcription(self, audio, result, whisper_prompt):
         print('transcribing segments...')
+        segments = result["segments"]
+        
         if whisper_prompt:
             print('using prompt:', repr(whisper_prompt))
         
         self.whisper.to("cuda")
         trimmer = Audio(sample_rate=16000, mono=True)
+        
         for seg in segments:
             start = seg['start']
             stop = seg['stop']
@@ -88,7 +91,10 @@ class Predictor():
             seg['transcript'] = self.transcribe_segment(frames, start, whisper_prompt)
             
             text = " ".join(list(map(lambda s: s['text'], seg['transcript'])))
-            print("[{}]: {}".format(seg['speaker'], text ))
+            
+            line = "[{}]: {}".format(seg['speaker'], text )
+            result["text"].append(line)
+            print(line)
 
     def transcribe_segment(self, audio, ctx_start, whisper_prompt):
         # `temperature`: temperature to use for sampling
@@ -162,8 +168,8 @@ class Predictor():
             result = self.run_diarization()
 
         # transcribe segments
-        
-        self.run_transcription(self.audio_pre.output_path, result["segments"], prompt)
+        result["text"] = []
+        self.run_transcription(self.audio_pre.output_path, result, prompt)
 
         # format segments
         result["segments"] = self.diarization_post.format_segments(
