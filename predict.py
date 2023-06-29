@@ -167,7 +167,7 @@ class Predictor():
         result["segments"] = self.diarization_post.format_segments(
             result["segments"])
 
-        result["text"] = "".join(result["text"])
+        result["text"] = "\n".join(result["text"])
 
         # cleanup
         self.audio_pre.cleanup()
