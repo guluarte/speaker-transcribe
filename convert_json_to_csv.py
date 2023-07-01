@@ -9,7 +9,7 @@ def write_csv(json_file, output, prompter):
   
     data = json.load(f)
     
-    csv_file = open(f"csv/{output}-prompter-{prompter}.csv", 'w+')
+    csv_file = open(f"{output}-prompter-{prompter}.csv", 'w+')
     writer = csv.writer(csv_file)
     
     writer.writerow(["prompt", "completion"])
