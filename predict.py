@@ -17,7 +17,7 @@ class Predictor():
     def setup(self):
         """Load the model into memory to make running multiple predictions efficient"""
         self.audio_pre = AudioPreProcessor()
-
+        
         self.diarization = SpeakerDiarization(
             segmentation="/data/pyannote/segmentation/pytorch_model.bin",
             embedding="/data/speechbrain/spkrec-ecapa-voxceleb",
@@ -84,9 +84,14 @@ class Predictor():
 
             text = " ".join(list(map(lambda s: s['text'], seg['transcript'])))
 
-            line = "[{}]: {}".format(seg['speaker'], text)
+            line = {}
+            line['speaker'] = seg['speaker']
+            line['text'] = text
             result["text"].append(line)
+
             print(line)
+            
+        
 
     def transcribe_segment(self, audio, ctx_start, whisper_prompt):
         # `temperature`: temperature to use for sampling
@@ -153,6 +158,7 @@ class Predictor():
 
         self.audio_pre.process(audio)
 
+
         if self.audio_pre.error:
             print(self.audio_pre.error)
             result = self.diarization_post.empty_result()
@@ -167,11 +173,9 @@ class Predictor():
         result["segments"] = self.diarization_post.format_segments(
             result["segments"])
 
-        result["text"] = '\n'.join(result["text"])
-
         # cleanup
         self.audio_pre.cleanup()
-
+        
         # write output
         with open(output, "w") as f:
             f.write(json.dumps(result, indent=2))

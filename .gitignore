@@ -4,3 +4,6 @@ venv/
 *.json
 */__pycache__/
 data/
+csv/
+output/
+

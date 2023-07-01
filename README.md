@@ -6,7 +6,7 @@
 - libsndfile1
 
 ```bash
-apt get install ffmpeg libsndfile1 python3.8-venv -y
+apt-get install ffmpeg libsndfile1 python3.8-venv -y
 ```
 
 ### Install libaries
