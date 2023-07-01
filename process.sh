@@ -8,24 +8,6 @@ process_yt_video () {
 	python convert_json_to_csv.py "./output/$1.json" "./output/$1.csv"
 }
 
-#https://www.youtube.com/watch?v=HKp68LX7fPA
-#https://www.youtube.com/watch?v=PM60sowd3x4
-#https://www.youtube.com/watch?v=Tm8z4Fs8XEs
-#https://www.youtube.com/watch?v=xGIWq3271DY
-#https://www.youtube.com/watch?v=IjM3ZO9QnZ8
-#https://www.youtube.com/watch?v=tG8w4H6CP_Y
-#https://www.youtube.com/watch?v=rQ7G8qIgMPg
-#https://www.youtube.com/watch?v=HKp68LX7fPA
-#https://www.youtube.com/watch?v=peqWQ0nkjC0
-#https://www.youtube.com/watch?v=-HNYcyDahtg
+#https://www.youtube.com/watch?v=dQw4w9WgXcQ
 
-process_yt_video "HKp68LX7fPA"
-process_yt_video "PM60sowd3x4"
-process_yt_video "Tm8z4Fs8XEs"
-process_yt_video "xGIWq3271DY"
-process_yt_video "IjM3ZO9QnZ8"
-process_yt_video "tG8w4H6CP_Y"
-process_yt_video "rQ7G8qIgMPg"
-process_yt_video "HKp68LX7fPA"
-process_yt_video "peqWQ0nkjC0"
-process_yt_video "-HNYcyDahtg"
+process_yt_video "dQw4w9WgXcQ"
