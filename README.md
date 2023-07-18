@@ -6,13 +6,13 @@
 - libsndfile1
 
 ```bash
-apt-get install ffmpeg libsndfile1 python3.8-venv -y
+apt-get install ffmpeg libsndfile1 python3.10-venv -y
 ```
 
 ### Install libaries
 
 ```bash
-python3.8 -m venv venv
+python3.10 -m venv venv
 source ./venv/bin/activate
 pip install -r requeriments.txt
 ```
