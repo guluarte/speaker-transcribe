@@ -6,4 +6,5 @@ venv/
 data/
 csv/
 output/
+process.sh
 

@@ -29,8 +29,4 @@ process_yt_video () {
 	python convert_json_to_csv.py "./output/$1.json" "./output/$1"
 }
 
-process_yt_video "JGbc-S2GiPc"
-process_yt_video "0FIDNuu6RSo"
-process_yt_video "JdAe128QvOM"
-process_yt_video "to73DYQkApQ"
-process_yt_video "xIm1E38yPTE"
+process_yt_video "yt-id"
