@@ -15,7 +15,7 @@ def write_csv(json_file, output, prompter):
     
     writer.writerow(["prompt", "completion"])
     
-    prompt = " USER: Hi! "
+    prompt = " Hi! "
     completion = ""
   
     for seg in data['text']:
@@ -27,7 +27,7 @@ def write_csv(json_file, output, prompter):
             completion = f'{completion}{text}'
         
         if prompt != "" and completion != "":
-            writer.writerow([f"{prompt}\n", f"{completion} ###\n"])
+            writer.writerow([f"USER: {prompt}\n", f"{completion} ###\n"])
             text_file.write(f"USER:{prompt}\n")
             text_file.write(f"AI:{completion}\n")
             prompt = ""
