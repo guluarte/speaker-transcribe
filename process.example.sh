@@ -1,9 +1,9 @@
-#apt-get update
-#apt-get install ffmpeg libsndfile1 python3.10-venv -y
+apt-get update
+apt-get install ffmpeg libsndfile1 python3.10-venv -y
 
-#python3.10 -m venv venv
-#source ./venv/bin/activate
-#pip install -r requeriments.txt
+python3.10 -m venv venv
+source ./venv/bin/activate
+pip install -r requeriments.txt
 
 if [[ ! -e "/data/pyannote" ]]
 then
@@ -13,20 +13,35 @@ fi
 if [[ ! -e "/data/whisper/medium.en.pt" ]]
 then
     mkdir /data/whisper
-    wget -P /data/whisper https://openaipublic.azureedge.net/main/whisper/models/d7440d1dc186f76616474e0ff0b3b6b879abc9d1a4926b7adfa41db2d497ab4f/medium.en.pt
+    wget -P /data/whisper https://openaipublic.azureedge.net/main/whisper/models/81f7c96c852ee8fc832187b0132e569d6c3065a3252ed18e56effd0b6a73e524/large-v2.pt
 fi
 
 sudo wget -qO /usr/local/bin/yt-dlp https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp
 sudo chmod a+rx /usr/local/bin/yt-dlp
 yt-dlp --version
 
+mkdir -p ./output/json/
+mkdir -p ./output/audios/
+mkdir -p ./output/csv/
+
 process_yt_video () {
-	yt-dlp "https://www.youtube.com/watch?v=$1" -f 251 -o "./output/$1.webm"
-    if [[ ! -e "./output/$1.json" ]]
-    then
-        python predict.py "./output/$1.webm" "./output/$1.json"
-    fi
-	python convert_json_to_csv.py "./output/$1.json" "./output/$1"
+	yt-dlp "$1" --sponsorblock-remove all -f ba -o "./output/audios/audio-%(id)s.%(ext)s"
 }
 
-process_yt_video "yt-id"
+process_yt_video "https://www.youtube.com/watch?v=id"
+
+audiofiles=`ls ./output/audios/audio-*`
+for eachfile in $audiofiles
+do
+    if [[ ! -e "./output/json/$eachfile" ]]
+    then
+        echo $eachfile
+        python predict.py "$eachfile" "./output/json/$(basename $eachfile).json" "Transcript of Part of a Career Counseling Session"
+    fi
+done
+
+csvfiles=`ls ./output/json/*.json`
+for eachfile in $csvfiles
+do
+    python convert_json_to_csv.py "$eachfile" "./output/csv/$(basename $eachfile)"
+done
