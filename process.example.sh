@@ -10,7 +10,7 @@ then
     wget -O - https://pyannote-speaker-diarization.s3.eu-west-2.amazonaws.com/data-2023-03-25-02.tar.gz | tar xz -C /
 fi
 
-if [[ ! -e "/data/whisper/medium.en.pt" ]]
+if [[ ! -e "/data/whisper/large-v2.pt" ]]
 then
     mkdir /data/whisper
     wget -P /data/whisper https://openaipublic.azureedge.net/main/whisper/models/81f7c96c852ee8fc832187b0132e569d6c3065a3252ed18e56effd0b6a73e524/large-v2.pt
