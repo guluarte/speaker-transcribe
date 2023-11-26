@@ -24,6 +24,13 @@ mkdir /data/whisper
 wget -P /data/whisper https://openaipublic.azureedge.net/main/whisper/models/d7440d1dc186f76616474e0ff0b3b6b879abc9d1a4926b7adfa41db2d497ab4f/medium.en.pt
 ```
 
+### Install yt-dlp
+```bash
+sudo wget -qO /usr/local/bin/yt-dlp https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp
+sudo chmod a+rx /usr/local/bin/yt-dlp
+yt-dlp --version
+```
+
 ### Inference:
 ```bash
 python predict.py "./test.webm" "./output.json" "prompt"
