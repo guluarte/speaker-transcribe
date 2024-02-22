@@ -1,6 +1,10 @@
 import json
 import sys
 
+import os
+
+import time
+
 import numpy as np
 import torch
 
@@ -39,8 +43,8 @@ class Predictor():
         })
         self.diarization_post = DiarizationPostProcessor()
 
-        with open(f"/data/whisper/medium.en.pt", "rb") as f:
-            checkpoint = torch.load(f, map_location="cpu")
+        with open(f"/data/whisper/large-v3.pt", "rb") as f:
+            checkpoint = torch.load(f, map_location="cuda:0")
             dims = ModelDimensions(**checkpoint["dims"])
         self.whisper = Whisper(dims)
         self.whisper.load_state_dict(checkpoint["model_state_dict"])
@@ -90,8 +94,6 @@ class Predictor():
             result["text"].append(line)
 
             print(line)
-            
-        
 
     def transcribe_segment(self, audio, ctx_start, whisper_prompt):
         # `temperature`: temperature to use for sampling
@@ -182,18 +184,42 @@ class Predictor():
         return output
 
 
+"""
+Get a list of all files in ./output/audios/
+"""
+def get_files():
+    files = []
+    for file in os.listdir("./output/audios/"):
+        files.append(file)
+    return files
+
 def main() -> int:
     """Echo the input arguments to standard output"""
-    print("use: python predict.py \"./test.webm\" \"./output.json\" \"prompt\"")
-    audio = sys.argv[1]
-    output = sys.argv[2] if len(sys.argv) > 2 else "./output.json"
-    prompt = sys.argv[3] if len(sys.argv) > 3 else ""
-    print("Audio file:[{}]".format(audio))
-    print("Output file:[{}]".format(output))
+    print("use: python predict.py \"prompt\"")
+    prompt = sys.argv[1] if len(sys.argv) > 1 else ""
     print("Prompt:[{}]".format(prompt))
+    
     p = Predictor()
+
+    print("Loading model...")
     p.setup()
-    p.predict(audio, output, prompt)
+    
+    
+    # run predict on all files
+    while True:
+        print("Getting files...")
+        audio_files = get_files()
+        for audio in audio_files:
+            audio_file = os.path.join("./output/audios/", audio)
+            output_file = os.path.join("./output/", audio + ".json" )
+            print("Audio file:[{}]".format(audio_file))
+            print("Output file:[{}]".format(output_file))
+            p.predict(audio_file, output_file, prompt)
+            # remove audio file
+            os.remove(audio_file)
+        # sleep for 60 seconds
+        print("Sleeping for 60 seconds...")
+        time.sleep(60)
     return 0
 
 

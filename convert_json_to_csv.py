@@ -32,7 +32,10 @@ def write_csv(json_file, output, prompter):
             text_file.write(f"AI:{completion}\n")
             prompt = ""
             completion = ""
-            
+    
+    writer.writerow([f"USER: {prompt}\n", f"{completion} ###\n"])
+    text_file.write(f"USER:{prompt}\n")
+    text_file.write(f"AI:{completion}\n")
     # Closing file
     f.close()
     text_file.close()
